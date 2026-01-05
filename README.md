@@ -1,10 +1,22 @@
 # MCP Database Server
 
-A Model Context Protocol (MCP) server for managing local SQLite database operations using **FastMCP** with an HTTP (streamable) transport.
+A **Model Context Protocol (MCP)** server for managing a local SQLite database using **FastMCP** with a **streamable HTTP transport**, plus an **LLM-powered MCP client** that can reason about user questions and automatically decide which database tools to call.
 
 ---
 
-## Quick Start
+## 🌟 Overview
+
+This project demonstrates:
+
+- ✅ An MCP-compliant database server
+- ✅ SQLite-backed CRUD operations exposed as MCP tools
+- ✅ HTTP (streamable) MCP transport
+- ✅ A Python client using **LangChain + Ollama**
+- ✅ Real LLM-driven decision-making over MCP tools
+
+---
+
+## 🚀 Quick Start
 
 ### 1. Install Dependencies
 
@@ -12,46 +24,50 @@ A Model Context Protocol (MCP) server for managing local SQLite database operati
 pip install -r requirements.txt
 ```
 
-
-### 2. Run the Server
+### 2. Run the MCP Server
 
 ```bash
-python main_app.py
+python server.py
+# or
+uvicorn server:app --host 127.0.0.1 --port 8000 --reload
 ```
 
----
+### 3. Server Endpoints
 
-### 3. Access the Server
+* **MCP Endpoint**: http://127.0.0.1:8000/mcp
+* **Health Check**: http://127.0.0.1:8000/health
+* **FastAPI Docs**: http://127.0.0.1:8000/docs
+* **ReDoc**: http://127.0.0.1:8000/redoc
 
-* **MCP HTTP Endpoint**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
-* **FastAPI Docs (if mounted)**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-* **ReDoc**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
-
-> ⚠️ Note: MCP must be mounted at the **root path** using `mcp.streamable_http_app()`.
-
----
-
-## Features
-
-* **Model Context Protocol (MCP)** server
-* **FastMCP** with streamable HTTP transport
-* **SQLite** local database
-* **8 Database Tools** exposed to MCP clients
-* **Safe Transport Configuration** (DNS rebinding configurable)
-* **Structured JSON responses**
-* **Simple local deployment**
+> ⚠️ MCP must be mounted at the **root path** using `mcp.streamable_http_app()`.
 
 ---
 
-## Environment Variables
+## ✨ Features
 
-Configure the server using environment variables:
+### MCP Server
+
+* 🔌 Model Context Protocol (MCP) compliant
+* ⚡ FastMCP with streamable HTTP transport
+* 💾 SQLite local database
+* 🛠️ 8 structured database tools
+* 📊 JSON-formatted responses
+* 🏠 Simple local deployment
+
+### MCP Client / LLM Agent
+
+* 🌐 Streamable HTTP MCP client
+* 🔍 Automatic tool discovery
+* 🔗 LangChain `StructuredTool` integration
+* 🤖 Ollama-powered local LLM
+* 🧠 Multi-step tool execution and reasoning loop
+
+---
+
+## ⚙️ Environment Variables
 
 ```bash
-# SQLite database file (default: data.db)
 DB_FILE=data.db
-
-# Optional FastAPI server settings
 HOST=127.0.0.1
 PORT=8000
 ```
@@ -59,36 +75,14 @@ PORT=8000
 ### Example (PowerShell)
 
 ```powershell
-$env:DB_FILE = "C:\path\to\database.db"
-$env:PORT = "9000"
-python main_app.py
+$env:DB_FILE="C:\path\to\data.db"
+$env:PORT="8000"
+python server.py
 ```
 
 ---
 
-## MCP Configuration (Claude Desktop)
-
-Add the server to your Claude Desktop configuration:
-
-```json
-{
-  "mcpServers": {
-    "database": {
-      "command": "python",
-      "args": ["/path/to/main_app.py"],
-      "env": {
-        "DB_FILE": "/path/to/data.db",
-        "HOST": "127.0.0.1",
-        "PORT": "8000"
-      }
-    }
-  }
-}
-```
-
----
-
-## Database Schema
+## 🗄️ Database Schema
 
 ### Users Table
 
@@ -115,55 +109,191 @@ CREATE TABLE products (
 
 ---
 
-## Available MCP Tools
+## 🛠️ Available MCP Tools
 
-The following tools are exposed via MCP:
+| Tool Name | Description |
+|-----------|-------------|
+| `execute_query` | Execute SQL SELECT queries |
+| `insert_user` | Insert a new user |
+| `insert_product` | Insert a new product |
+| `update_user` | Update user name or email |
+| `delete_user` | Delete a user by ID |
+| `get_all_users` | Retrieve all users |
+| `get_all_products` | Retrieve all products |
+| `get_database_info` | View database schema information |
 
-1. **execute_query** – Execute SQL SELECT queries
-2. **insert_user** – Insert a new user
-3. **insert_product** – Insert a new product
-4. **update_user** – Update user name or email
-5. **delete_user** – Delete a user by ID
-6. **get_all_users** – Retrieve all users
-7. **get_all_products** – Retrieve all products
-8. **get_database_info** – View database schema information
-
-All responses are returned as formatted JSON strings.
+All tools return formatted JSON strings.
 
 ---
 
-## Project Structure
+## 🤖 LLM-Powered MCP Client
 
-```text
-.
-├── main_app.py
-├── database_tools.py
-├── requirements.txt
-├── data.db
-└── README.md
+The client (`client.py`) connects to the MCP server and allows an LLM to:
+
+1. 🔍 Discover available MCP tools
+2. 💬 Analyze natural-language questions
+3. 🎯 Decide which tools to call
+4. ⚙️ Execute tools automatically
+5. ✅ Produce a final response
+
+---
+
+### Requirements (Client)
+
+**Install Ollama:**
+- Download from [ollama.ai](https://ollama.ai)
+- Pull a model:
+
+```bash
+ollama pull llama3.2:1b
+# or for better tool calling:
+ollama pull llama3.2:3b
+```
+
+**Install Python dependencies:**
+
+```bash
+pip install langchain-ollama langchain-core mcp
 ```
 
 ---
 
-## Example
-<img width="1302" height="360" alt="image" src="https://github.com/user-attachments/assets/4c9ccb57-88f9-4c11-b616-fefa5cd2f6e2" />
+### Running the Client
 
+**Start the MCP server first:**
 
-## Testing
+```bash
+python server.py
+```
 
-### MCP HTTP
+**Then run the client:**
 
-Run the server and connect using any MCP-compatible client (e.g., Claude Desktop).
+```bash
+python client.py
+```
 
+---
 
-## Security Notes
+### Example Queries
 
-* DNS rebinding protection is **disabled by default** for local development:
+The LLM dynamically selects and executes the correct MCP tools:
+
+```text
+✅ "Show me all users in the database"
+✅ "Add a new user named Charlie Brown with email charlie@peanuts.com"
+✅ "What's the structure of the database?"
+✅ "List all products available"
+✅ "Insert a product called Laptop with price 999.99"
+```
+
+---
+
+## 📁 Project Structure
+
+```text
+.
+├── server.py            # MCP server (FastMCP)
+├── database_tools.py    # Database CRUD operations
+├── client.py            # LLM-powered MCP client
+├── requirements.txt     # Python dependencies
+├── data.db              # SQLite database (auto-created)
+└── README.md            # This file
+```
+
+---
+
+## 🧪 Testing
+
+Test the MCP server with:
+
+1. **Claude Desktop** (MCP integration)
+2. **Custom Python client** (`client.py`)
+3. **Any MCP-compatible client**
+
+### Manual Tool Testing
+
+```bash
+python test_server.py
+```
+
+---
+
+## 🔒 Security Notes
+
+⚠️ DNS rebinding protection is **disabled by default** for local development:
 
 ```python
 TransportSecuritySettings(enable_dns_rebinding_protection=False)
 ```
 
-Enable this for production deployments.
+**Enable this for production deployments.**
+
+---
+
+## 📦 requirements.txt
+
+```txt
+fastapi
+uvicorn[standard]
+mcp
+langchain-ollama
+langchain-core
+```
+
+---
+
+## 🎯 How It Works
+
+### Server Flow
+
+```
+User Query → MCP Client → HTTP Request → FastMCP Server → Database Tools → SQLite
+                                                                          ↓
+User Answer ← LLM Processing ← Tool Results ← JSON Response ← Database Query
+```
+
+### Client Flow
+
+```
+1. Connect to MCP server via streamable HTTP
+2. Discover available tools
+3. Convert MCP tools to LangChain tools
+4. Bind tools to LLM (Ollama)
+5. User asks question in natural language
+6. LLM analyzes question and decides which tools to call
+7. Execute tools via MCP
+8. LLM formulates final answer
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+---
+
+## 🙏 Acknowledgments
+
+- [Model Context Protocol (MCP)](https://modelcontextprotocol.io/)
+- [FastMCP](https://github.com/jlowin/fastmcp)
+- [LangChain](https://www.langchain.com/)
+- [Ollama](https://ollama.ai/)
+
+---
+
+## 📞 Support
+
+If you encounter issues:
+
+1. Check that Ollama is running: `ollama list`
+2. Verify server is running: `curl http://127.0.0.1:8000/health`
+3. Check server logs for errors
+4. Try a larger model: `ollama pull llama3.2:3b`
 
 ---
