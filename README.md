@@ -161,7 +161,7 @@ pip install langchain-ollama langchain-core mcp
 **Start the MCP server first:**
 
 ```bash
-python server.py
+python main_app.py
 ```
 
 **Then run the client:**
