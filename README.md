@@ -183,7 +183,7 @@ The LLM dynamically selects and executes the correct MCP tools:
 ✅ "List all products available"
 ✅ "Insert a product called Laptop with price 999.99"
 ```
-
+<img width="1302" height="360" alt="image" src="https://github.com/user-attachments/assets/4c9ccb57-88f9-4c11-b616-fefa5cd2f6e2" />
 ---
 
 ## 📁 Project Structure
