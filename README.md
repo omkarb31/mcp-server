@@ -27,9 +27,7 @@ pip install -r requirements.txt
 ### 2. Run the MCP Server
 
 ```bash
-python server.py
-# or
-uvicorn server:app --host 127.0.0.1 --port 8000 --reload
+python main_app.py
 ```
 
 ### 3. Server Endpoints
@@ -192,7 +190,7 @@ The LLM dynamically selects and executes the correct MCP tools:
 
 ```text
 .
-├── server.py            # MCP server (FastMCP)
+├── main_app.py            # MCP server (FastMCP)
 ├── database_tools.py    # Database CRUD operations
 ├── client.py            # LLM-powered MCP client
 ├── requirements.txt     # Python dependencies
@@ -213,7 +211,7 @@ Test the MCP server with:
 ### Manual Tool Testing
 
 ```bash
-python test_server.py
+python test_fastmcp.py
 ```
 
 ---
